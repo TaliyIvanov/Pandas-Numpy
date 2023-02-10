@@ -1,0 +1,679 @@
+/**
+ * Created by PhpStorm.
+ * @author: Monstr
+ * @link http://mmws.ru/
+ *
+ * @version  2.3.1
+ * @licence MIT license
+ *
+ * Date: 01.08.2022
+ * Time: 21:26
+ */
+
+(function ($) {
+    var _s      = {},
+        _b      = null,
+        _v      = $('<div />', {
+            id : 'l2central-viewer'
+        }).bind({
+            mouseleave : function (e) {
+                if (e.shiftKey) return;
+
+                $(this).removeData('l2central').hide().empty();
+            }
+        }),
+        l2db    = function (target, settings) {
+            this.links = {};
+            this.query = {};
+            this._data = {};
+            this._show = [];
+
+            this.opt          = $.extend({}, this.defaults, settings);
+            this.opt.iconSize = Math.max(18, Math.min(40, this.opt.iconSize));
+            this.opt.domain   = (typeof this.opt.domain === 'string') ? [this.opt.domain] : this.opt.domain;
+
+            var _this      = this;
+            _this.elements = target.find('a[href]').filter(function () {
+                if (!(('host' in this)
+                    || $.inArray(this.host, _this.opt.domain) < 0 || !('pathname' in this))
+                ) return false;
+
+                var math = null, _link = this;
+                $.each(_this.opt.pattern, function () {
+                    return !(math = (new RegExp(this, 'ig')).exec(_link.pathname));
+                });
+                if (!math || !('groups' in math)) return false;
+
+                if (_this.opt.appleStyle) _this._push(this, math.groups);
+                else $(this).data(math.groups);
+
+                return true;
+            });
+
+            if (_this.elements.length > 0) _this._start();
+        },
+        _show   = function (_l2db, host, site, data) {
+            var _this = this;
+
+            _this._l2db = _l2db;
+            $.each(data, function (method) {
+                if (method in _this
+                    && $.isFunction(_this[method])
+                    && (host in _l2db.links && site in _l2db.links[host] && method in _l2db.links[host][site])
+                ) _this[method].call(_this, this, _l2db.links[host][site][method]);
+
+                if (method === 'style') _this.style.call(_this, this);
+            });
+        },
+        _viewer = function (_l2db, link, item) {
+            this._l2db  = _l2db;
+            this.link   = link;
+            this.item   = item;
+            this.target = _v;
+            this.hash   = _md5(item);
+
+            var _this = this;
+
+            $(this.link).bind('mouseenter.l2central', function (e) {
+                _this.show(e);
+            });
+            $(this.link).bind('mousemove.l2central', function (e) {
+                _this.move(e);
+            });
+            $(this.link).bind('mouseleave.l2central', function (e) {
+                _this.hide(e);
+            });
+        },
+        _md5    = function (string, key, raw) {
+            if (typeof string !== 'string') string = JSON.stringify(string);
+
+            /**
+             * Add integers, wrapping at 2^32. This uses 16-bit operations internally
+             * to work around bugs in some JS interpreters.
+             */
+            var
+                safeAdd       = function (x, y) {
+                    var lsw = (x & 0xffff) + (y & 0xffff);
+                    var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+                    return (msw << 16) | (lsw & 0xffff);
+                },
+
+                /**
+                 * Bitwise rotate a 32-bit number to the left.
+                 */
+                bitRotateLeft = function (num, cnt) {
+                    return (num << cnt) | (num >>> (32 - cnt))
+                },
+
+                /**
+                 * These functions implement the four basic operations the algorithm uses.
+                 */
+                md5cmn        = function (q, a, b, x, s, t) {
+                    return safeAdd(bitRotateLeft(safeAdd(safeAdd(a, q), safeAdd(x, t)), s), b)
+                },
+                md5ff         = function (a, b, c, d, x, s, t) {
+                    return md5cmn((b & c) | (~b & d), a, b, x, s, t)
+                },
+                md5gg         = function (a, b, c, d, x, s, t) {
+                    return md5cmn((b & d) | (c & ~d), a, b, x, s, t)
+                },
+                md5hh         = function (a, b, c, d, x, s, t) {
+                    return md5cmn(b ^ c ^ d, a, b, x, s, t)
+                },
+                md5ii         = function (a, b, c, d, x, s, t) {
+                    return md5cmn(c ^ (b | ~d), a, b, x, s, t)
+                },
+
+                /**
+                 * Calculate the MD5 of an array of little-endian words, and a bit length.
+                 */
+                binlMD5       = function (x, len) {
+                    /* append padding */
+                    x[len >> 5] |= 0x80 << (len % 32);
+                    x[((len + 64) >>> 9 << 4) + 14] = len;
+
+                    var i;
+                    var olda;
+                    var oldb;
+                    var oldc;
+                    var oldd;
+                    var a = 1732584193;
+                    var b = -271733879;
+                    var c = -1732584194;
+                    var d = 271733878;
+
+                    for (i = 0; i < x.length; i += 16) {
+                        olda = a;
+                        oldb = b;
+                        oldc = c;
+                        oldd = d;
+
+                        a = md5ff(a, b, c, d, x[i], 7, -680876936);
+                        d = md5ff(d, a, b, c, x[i + 1], 12, -389564586);
+                        c = md5ff(c, d, a, b, x[i + 2], 17, 606105819);
+                        b = md5ff(b, c, d, a, x[i + 3], 22, -1044525330);
+                        a = md5ff(a, b, c, d, x[i + 4], 7, -176418897);
+                        d = md5ff(d, a, b, c, x[i + 5], 12, 1200080426);
+                        c = md5ff(c, d, a, b, x[i + 6], 17, -1473231341);
+                        b = md5ff(b, c, d, a, x[i + 7], 22, -45705983);
+                        a = md5ff(a, b, c, d, x[i + 8], 7, 1770035416);
+                        d = md5ff(d, a, b, c, x[i + 9], 12, -1958414417);
+                        c = md5ff(c, d, a, b, x[i + 10], 17, -42063);
+                        b = md5ff(b, c, d, a, x[i + 11], 22, -1990404162);
+                        a = md5ff(a, b, c, d, x[i + 12], 7, 1804603682);
+                        d = md5ff(d, a, b, c, x[i + 13], 12, -40341101);
+                        c = md5ff(c, d, a, b, x[i + 14], 17, -1502002290);
+                        b = md5ff(b, c, d, a, x[i + 15], 22, 1236535329);
+
+                        a = md5gg(a, b, c, d, x[i + 1], 5, -165796510);
+                        d = md5gg(d, a, b, c, x[i + 6], 9, -1069501632);
+                        c = md5gg(c, d, a, b, x[i + 11], 14, 643717713);
+                        b = md5gg(b, c, d, a, x[i], 20, -373897302);
+                        a = md5gg(a, b, c, d, x[i + 5], 5, -701558691);
+                        d = md5gg(d, a, b, c, x[i + 10], 9, 38016083);
+                        c = md5gg(c, d, a, b, x[i + 15], 14, -660478335);
+                        b = md5gg(b, c, d, a, x[i + 4], 20, -405537848);
+                        a = md5gg(a, b, c, d, x[i + 9], 5, 568446438);
+                        d = md5gg(d, a, b, c, x[i + 14], 9, -1019803690);
+                        c = md5gg(c, d, a, b, x[i + 3], 14, -187363961);
+                        b = md5gg(b, c, d, a, x[i + 8], 20, 1163531501);
+                        a = md5gg(a, b, c, d, x[i + 13], 5, -1444681467);
+                        d = md5gg(d, a, b, c, x[i + 2], 9, -51403784);
+                        c = md5gg(c, d, a, b, x[i + 7], 14, 1735328473);
+                        b = md5gg(b, c, d, a, x[i + 12], 20, -1926607734);
+
+                        a = md5hh(a, b, c, d, x[i + 5], 4, -378558);
+                        d = md5hh(d, a, b, c, x[i + 8], 11, -2022574463);
+                        c = md5hh(c, d, a, b, x[i + 11], 16, 1839030562);
+                        b = md5hh(b, c, d, a, x[i + 14], 23, -35309556);
+                        a = md5hh(a, b, c, d, x[i + 1], 4, -1530992060);
+                        d = md5hh(d, a, b, c, x[i + 4], 11, 1272893353);
+                        c = md5hh(c, d, a, b, x[i + 7], 16, -155497632);
+                        b = md5hh(b, c, d, a, x[i + 10], 23, -1094730640);
+                        a = md5hh(a, b, c, d, x[i + 13], 4, 681279174);
+                        d = md5hh(d, a, b, c, x[i], 11, -358537222);
+                        c = md5hh(c, d, a, b, x[i + 3], 16, -722521979);
+                        b = md5hh(b, c, d, a, x[i + 6], 23, 76029189);
+                        a = md5hh(a, b, c, d, x[i + 9], 4, -640364487);
+                        d = md5hh(d, a, b, c, x[i + 12], 11, -421815835);
+                        c = md5hh(c, d, a, b, x[i + 15], 16, 530742520);
+                        b = md5hh(b, c, d, a, x[i + 2], 23, -995338651);
+
+                        a = md5ii(a, b, c, d, x[i], 6, -198630844);
+                        d = md5ii(d, a, b, c, x[i + 7], 10, 1126891415);
+                        c = md5ii(c, d, a, b, x[i + 14], 15, -1416354905);
+                        b = md5ii(b, c, d, a, x[i + 5], 21, -57434055);
+                        a = md5ii(a, b, c, d, x[i + 12], 6, 1700485571);
+                        d = md5ii(d, a, b, c, x[i + 3], 10, -1894986606);
+                        c = md5ii(c, d, a, b, x[i + 10], 15, -1051523);
+                        b = md5ii(b, c, d, a, x[i + 1], 21, -2054922799);
+                        a = md5ii(a, b, c, d, x[i + 8], 6, 1873313359);
+                        d = md5ii(d, a, b, c, x[i + 15], 10, -30611744);
+                        c = md5ii(c, d, a, b, x[i + 6], 15, -1560198380);
+                        b = md5ii(b, c, d, a, x[i + 13], 21, 1309151649);
+                        a = md5ii(a, b, c, d, x[i + 4], 6, -145523070);
+                        d = md5ii(d, a, b, c, x[i + 11], 10, -1120210379);
+                        c = md5ii(c, d, a, b, x[i + 2], 15, 718787259);
+                        b = md5ii(b, c, d, a, x[i + 9], 21, -343485551);
+
+                        a = safeAdd(a, olda);
+                        b = safeAdd(b, oldb);
+                        c = safeAdd(c, oldc);
+                        d = safeAdd(d, oldd);
+                    }
+                    return [a, b, c, d]
+                },
+
+                /**
+                 * Convert an array of little-endian words to a string
+                 */
+                binl2rstr     = function (input) {
+                    var i;
+                    var output   = '';
+                    var length32 = input.length * 32;
+                    for (i = 0; i < length32; i += 8) {
+                        output += String.fromCharCode((input[i >> 5] >>> (i % 32)) & 0xff)
+                    }
+                    return output
+                },
+
+                /**
+                 * Convert a raw string to an array of little-endian words
+                 * Characters >255 have their high-byte silently ignored.
+                 */
+                rstr2binl     = function (input) {
+                    var i;
+                    var output                      = [];
+                    output[(input.length >> 2) - 1] = undefined;
+                    for (i = 0; i < output.length; i += 1) {
+                        output[i] = 0
+                    }
+                    var length8 = input.length * 8;
+                    for (i = 0; i < length8; i += 8) {
+                        output[i >> 5] |= (input.charCodeAt(i / 8) & 0xff) << (i % 32)
+                    }
+                    return output
+                },
+
+                /**
+                 * Calculate the MD5 of a raw string
+                 */
+                rstrMD5       = function (s) {
+                    return binl2rstr(binlMD5(rstr2binl(s), s.length * 8))
+                },
+
+                /**
+                 * Calculate the HMAC-MD5, of a key and some data (raw strings)
+                 */
+                rstrHMACMD5   = function (key, data) {
+                    var i;
+                    var bkey = rstr2binl(key);
+                    var ipad = [];
+                    var opad = [];
+                    var hash;
+                    ipad[15] = opad[15] = undefined;
+                    if (bkey.length > 16) {
+                        bkey = binlMD5(bkey, key.length * 8)
+                    }
+                    for (i = 0; i < 16; i += 1) {
+                        ipad[i] = bkey[i] ^ 0x36363636;
+                        opad[i] = bkey[i] ^ 0x5c5c5c5c;
+                    }
+                    hash = binlMD5(ipad.concat(rstr2binl(data)), 512 + data.length * 8);
+                    return binl2rstr(binlMD5(opad.concat(hash), 512 + 128))
+                },
+
+                /**
+                 * Convert a raw string to a hex string
+                 */
+                rstr2hex      = function (input) {
+                    var hexTab = '0123456789abcdef';
+                    var output = '';
+                    var x;
+                    var i;
+                    for (i = 0; i < input.length; i += 1) {
+                        x = input.charCodeAt(i);
+                        output += hexTab.charAt((x >>> 4) & 0x0f) + hexTab.charAt(x & 0x0f)
+                    }
+                    return output;
+                },
+
+                /**
+                 * Encode a string as utf-8
+                 */
+                str2rstrUTF8  = function (input) {
+                    return unescape(encodeURIComponent(input))
+                },
+
+                /**
+                 * Take string arguments and return either raw or hex encoded strings
+                 */
+                rawMD5        = function (s) {
+                    return rstrMD5(str2rstrUTF8(s))
+                },
+                hexMD5        = function (s) {
+                    return rstr2hex(rawMD5(s))
+                },
+                rawHMACMD5    = function (k, d) {
+                    return rstrHMACMD5(str2rstrUTF8(k), str2rstrUTF8(d))
+                },
+                hexHMACMD5    = function hexHMACMD5(k, d) {
+                    return rstr2hex(rawHMACMD5(k, d))
+                };
+
+            if (!key) {
+                if (!raw) return hexMD5(string);
+
+                return rawMD5(string);
+            }
+
+            if (!raw) return hexHMACMD5(key, string);
+
+            return rawHMACMD5(key, string);
+        };
+
+    l2db.prototype = {
+        defaults : {
+            lang         : ($('html').attr('lang') || navigator.language || navigator.userLanguage || 'ru').substr(0, 2).toLowerCase(),
+            domain       : [
+                'l2central.ru',
+                'beta.l2central.ru'
+            ],
+            addIcon      : true,
+            pattern      : [
+                /^\/(?<site>main|classic|essence+)\/(?<section>items|skills|npcs|quests)\/(?<class>[a-z_\/]*?)(?<id>[0-9_{1,}]+)\.html$/
+            ],
+            iconSize     : 25,
+            fontWeight   : 'bold',
+            background   : 'transparent',
+            appleStyle   : true,
+            replaceText  : true,
+            includeStyle : true
+        },
+        _push    : function (el, math) {
+            var host  = el.host,
+                query = this.query,
+                links = this.links;
+
+            if (!(host in query)) query[host] = {};
+            if (!(host in links)) links[host] = {};
+
+            if (!(math.site in query[host])) query[host][math.site] = {};
+            if (!(math.site in links[host])) links[host][math.site] = {};
+
+            query = query[host][math.site];
+            links = links[host][math.site];
+
+            /** @namespace math.id */
+            /** @namespace math.site */
+            /** @namespace math.class */
+            /** @namespace math.section */
+
+            if (math.section === 'skills') {
+                math.class   = math.class.replace('/', '');
+                links.skills = links.skills || {};
+                query.skills = query.skills || {};
+
+                if (!(math.class in links.skills)) {
+                    links.skills[math.class]          = {};
+                    query.skills[math.class]          = [];
+                    links.skills[math.class][math.id] = [];
+
+                } else if (!(math.id in links.skills[math.class])) {
+                    links.skills[math.class][math.id] = [];
+                }
+
+                links.skills[math.class][math.id].push(el);
+                if ($.inArray(math.id, query.skills[math.class]) < 0) query.skills[math.class].push(math.id);
+            } else {
+                links[math.section]          = links[math.section] || {};
+                query[math.section]          = query[math.section] || [];
+                links[math.section][math.id] = links[math.section][math.id] || [];
+
+                links[math.section][math.id].push(el);
+                if ($.inArray(math.id, query[math.section]) < 0) query[math.section].push(math.id);
+            }
+        },
+        _start   : function () {
+            var _this = this;
+
+            if (_this.opt.appleStyle) {
+                $.each(_this.query, function (host) {
+                    $.each(this, function (site) {
+                        this.style = _this.opt.includeStyle ? 1 : 0;
+
+                        $.ajax('https://' + host + '/api/' + site + '/syndication/list/?lang=' + _this.opt.lang, {
+                            data     : this,
+                            type     : 'post',
+                            dataType : 'json',
+                            success  : function (data) {
+                                _this._show.push(new _show(_this, host, site, data));
+                            }
+                        });
+                    });
+                });
+            } else {
+                _this.elements.each(function () {
+                    var data = $(this).data();
+
+                    $(this).data('l2central', {
+                        type   : data.section,
+                        viewer : new _viewer(_this, this, (data.section === 'skills' ? {
+                            ids   : data.id,
+                            class : data.class
+                        } : {id : data.id}))
+                    });
+                });
+            }
+        }
+    };
+
+    _show.prototype = {
+        link  : function (list, links, type) {
+            /**
+             * @type {l2db}
+             */
+            var l2db = this._l2db;
+
+            $.each(links, function (id) {
+                if (!(id in list)) return;
+
+                var _i = list[id];
+
+                /** @namespace _i.id */
+                /** @namespace _i.ids */
+                /** @namespace _i.desc */
+                /** @namespace _i.icon */
+                /** @namespace _i.title */
+                /** @namespace _i.grade */
+                /** @namespace _i.add_desc */
+                /** @namespace _i.icon_panel */
+
+                $.each(this, function () {
+                    var _icon,
+                        _this = $(this).data('l2central', {
+                            type   : type,
+                            viewer : new _viewer(l2db, this, _i)
+                        });
+
+                    if (l2db.opt.appleStyle) _this
+                        .addClass('l2central-link')
+                        .css({
+                            fontWeight      : l2db.opt.fontWeight,
+                            backgroundColor : l2db.opt.background
+                        });
+                    if (!l2db.opt.appleStyle || !l2db.opt.replaceText) return;
+
+                    _icon = $('<span />', {
+                        class : 'l2central-link-icon',
+                        css   : {
+                            width     : l2db.opt.iconSize,
+                            minWidth  : l2db.opt.iconSize,
+                            height    : l2db.opt.iconSize,
+                            minHeight : l2db.opt.iconSize
+                        }
+                    });
+                    if (_i.icon !== null) _icon.append($('<img />', {
+                        loading : 'lazy',
+                        src     : '//' + this.host + '/upload/images/' + _i.icon + '.png'
+                    }));
+                    if (_i.icon_panel !== null) _icon.append($('<img />', {
+                        loading : 'lazy',
+                        class   : 'icon-panel',
+                        src     : '//' + this.host + '/upload/images/' + _i.icon_panel + '.png'
+                    }));
+
+                    var _span;
+                    if (l2db.opt.addIcon) {
+                        _span = $('<span />', {text : _i.desc});
+                        if (_i.add_desc || _i.title) _span.append($('<span />', {
+                            class : 'light-font',
+                            text  : ' ' + (_i.add_desc || _i.title)
+                        }));
+
+                        _this.html(_icon.add(_span));
+                    } else if (l2db.opt.replaceText) {
+                        _span = $('<span />', {text : _i.desc});
+                        if (_i.add_desc || _i.title) _span.append($('<span />', {
+                            class : 'light-font',
+                            text  : ' ' + (_i.add_desc || _i.title)
+                        }))
+
+                        _this.html(_span);
+                    } else {
+                        _icon.prependTo(_this);
+                    }
+                });
+            })
+        },
+        style : function (css) {
+            if ($('style#' + css.hash).length > 0) return;
+
+            _b.append($('<style />', {
+                id   : css.hash,
+                text : css.text,
+                type : 'text/css'
+            }));
+        },
+
+        npcs   : function (list, links) {
+            this.link(list, links, 'npcs');
+        },
+        items  : function (list, links) {
+            this.link(list, links, 'items');
+        },
+        skills : function (list, links) {
+            var _this = this;
+
+            $.each(links, function (className) {
+                if (!(className in links)) return;
+
+                _this.link(list, links[className], 'skills');
+            });
+        },
+    };
+
+    _viewer.prototype = {
+        tab           : function (e, d) {
+            d = d || e.originalEvent.wheelDelta;
+
+            var _n,
+                _t = this.target;
+            if (!e.shiftKey) return true;
+
+            if (d < 0) {
+                _n = _t.find('.tab-button-block .tab-list a.active').next();
+                if (_n.length <= 0) return false;
+
+                _n.addClass('active').siblings('a.active').removeClass('active');
+            } else {
+                _n = _t.find('.tab-button-block .tab-list a.active').prev();
+                if (_n.length <= 0) return false;
+
+                _n.addClass('active').siblings('a.active').removeClass('active');
+            }
+
+            _t.find(_n.attr('href')).addClass('active').siblings('div.content-tab.active').removeClass('active');
+            this._reallocation(e);
+        },
+        show          : function (e) {
+            var _h   = this.hash,
+                _l   = this.link,
+                _t   = this.target,
+                _d   = $(this.link).data('l2central');
+            var l2db = this._l2db;
+
+            l2db._data[_l.host] = l2db._data[_l.host] || {};
+
+            _t.data('l2central', {
+                item : _d.type === 'skills' ? this.item.ids : this.item.id
+            });
+            if (_h in l2db._data[_l.host]
+                && ('error' in l2db._data[_l.host][_h] || !('content' in l2db._data[_l.host][_h]))
+            ) return;
+
+            if (!(_h in l2db._data[_l.host])) this._get(e);
+            else this._show(e);
+        },
+        hide          : function (e) {
+            if (e.shiftKey) return;
+
+            this.target.removeData('l2central').hide().empty();
+        },
+        move          : function (e) {
+            if (e.shiftKey) return false;
+
+            this._reallocation(e);
+        },
+        _get          : function (e) {
+            var _q   = {},
+                _t   = this,
+                _h   = this.hash,
+                _d   = $(this.link).data('l2central');
+            var l2db = this._l2db;
+
+            _q.lang    = l2db.opt.lang;
+            _q.section = _d.type;
+
+            if (_d.type === 'skills') {
+                _q.class = _t.item.class;
+                _q.item  = _t.item.ids;
+            } else {
+                _q.item = _t.item.id;
+            }
+
+            var _m = (/\/(?<site>main|essence|classic+)\/.*/).exec(_t.link.pathname);
+            $.ajax('https://' + _t.link.host + '/api/' + _m.groups.site + '/syndication/view/', {
+                data     : _q,
+                type     : 'get',
+                dataType : 'json',
+                success  : function (data) {
+                    if ('error' in data
+                        || !('content' in data)
+                    ) return;
+
+                    l2db._data[_t.link.host][_h] = data;
+
+                    _t._show(e);
+                }
+            });
+        },
+        _show         : function (e) {
+            var _h   = this.hash,
+                _l   = this.link,
+                _t   = this.target,
+                _dl  = $(this.link).data('l2central'),
+                _dt  = $(this.target).data('l2central'),
+                _id  = _dl.type === 'skills' ? this.item.ids : this.item.id;
+            var l2db = this._l2db;
+
+            if (_dt === undefined || _id !== _dt.item) return;
+
+            _t.html(l2db._data[_l.host][_h].content).show();
+            _t.find('.tab-button-block .tab-list a').click(function (e) {
+                if (!e.shiftKey || $(this).hasClass('active')) return false;
+
+                $(this).addClass('active').siblings('a.active').removeClass('active');
+                $($(this).attr('href')).addClass('active').siblings('div.content-tab.active').removeClass('active');
+
+                return false;
+            });
+
+            this._reallocation(e);
+        },
+        _reallocation : function (e) {
+            var _o  = {
+                    top  : 0,
+                    left : 0
+                },
+                _t  = this.target,
+                _bw = _b.outerWidth(),
+                _tw = _t.outerWidth(),
+                _bh = _b.outerHeight(),
+                _th = _t.outerHeight();
+
+            _o.top += (e.pageY + _th + 20 > _bh ? (_th > e.pageY ? 2 : e.pageY - (_th + 5)) : e.pageY + 20);
+            _o.left += (e.pageX + _tw + 20 > _bw ? (_tw > e.pageX ? 2 : e.pageX - (_tw + 5)) : e.pageX + 20);
+
+            _t.css(_o);
+        }
+    };
+
+    $.fn.l2CentralSyndication = function (options) {
+        if (this.length <= 0) return this;
+
+        options = options || {};
+
+        var hash = _md5(JSON.stringify(options));
+
+        _s[hash] = new l2db(this, options);
+
+        return _s[hash].elements;
+    };
+
+    $(function () {
+        _b = $('body');
+
+        _b.append(_v);
+    });
+})(jQuery);

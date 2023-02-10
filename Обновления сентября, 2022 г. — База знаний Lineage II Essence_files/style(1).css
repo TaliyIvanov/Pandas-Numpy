@@ -1,0 +1,424 @@
+form {
+    width: 886px;
+    position: relative;
+}
+
+form .search-string {
+    width: 100%;
+    height: 60px;
+    display: flex;
+    margin-top: 20px;
+    flex-wrap: nowrap;
+    border-radius: 5px;
+    position: relative;
+    border: 2px solid #f5b105;
+}
+
+form .search-string > input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font: inherit;
+    padding: 0 30px;
+    border-radius: 5px;
+    background: transparent;
+    letter-spacing: inherit;
+    color: rgba(0, 0, 0, .75);
+}
+
+form .search-string > input::placeholder {
+    color: rgba(0, 0, 0, .5);
+}
+
+form .search-string > input:disabled {
+    user-select: none;
+}
+
+form .search-string > button {
+    width: 60px;
+    height: 56px;
+    border: none;
+    outline: none;
+    min-width: 60px;
+    padding: 13px 15px;
+    background: var(--a-color);
+    transition: background-color .2s;
+}
+
+form .search-string > button:hover {
+    background: var(--a-hover-color);
+}
+
+form .search-string > button:active {
+    background: var(--a-active-color);
+}
+
+form .search-string > button svg {
+    fill: #fff;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+form .search-string > input + .loader {
+    top: 50%;
+    left: 5px;
+    width: 20px;
+    height: 20px;
+    display: block;
+    margin-top: -10px;
+    position: absolute;
+    border-radius: 10px;
+    background: url("data:image/png;base64,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") no-repeat;
+}
+
+form .tooltip-search-result {
+    top: 80px;
+    left: -2px;
+    display: flex;
+    z-index: 10000;
+    flex-wrap: wrap;
+    overflow: hidden;
+    background: #fff;
+    max-height: 725px;
+    border-radius: 5px;
+    position: absolute;
+    padding-right: 10px;
+    width: calc(100% + 4px);
+    border: 2px solid #f5b105;
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+}
+
+form .tooltip-search-result:empty {
+    display: none;
+}
+
+form .tooltip-search-result ul {
+    margin: 0;
+    padding: 15px 0;
+    list-style: none;
+    width: calc(100% - 45px);
+}
+
+form .tooltip-search-result ul li {
+    display: flex;
+    padding: 0 30px;
+    align-items: center;
+    letter-spacing: normal;
+    border-radius: 0 5px 5px 0;
+}
+
+form .tooltip-search-result ul li.head-result-list {
+    height: 30px;
+    margin-bottom: 2px;
+    background: #e8e8ec;
+    justify-content: space-between;
+}
+
+form .tooltip-search-result ul li.head-result-list:after {
+    height: 20px;
+    display: flex;
+    padding: 0 6px;
+    min-width: 20px;
+    font-size: 12px;
+    background: #fff;
+    line-height: 13px;
+    border-radius: 10px;
+    align-items: center;
+    box-sizing: border-box;
+    justify-content: center;
+    content: attr(data-count);
+}
+
+form .tooltip-search-result ul li.head-result-list:not(:first-child) {
+    margin-top: 25px;
+}
+
+form .tooltip-search-result ul li:not(.head-result-list) {
+    height: 35px;
+    transition: .2s;
+}
+
+form .tooltip-search-result ul li:not(.head-result-list):hover {
+    background: #e8e8ec;
+}
+
+form .tooltip-search-result ul li a,
+form .tooltip-search-result ul li a:hover,
+form .tooltip-search-result ul li a:active {
+    color: #000;
+}
+
+form .tooltip-search-result ul li.head-result-list a {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+form .tooltip-search-result ul li.head-result-list a svg {
+    top: -1px;
+    width: 11px;
+    height: 11px;
+    margin-left: 10px;
+    position: relative;
+    transition: all .2s;
+}
+
+form .tooltip-search-result ul li.head-result-list:not(:hover) a svg {
+    opacity: 0;
+}
+
+form .tooltip-search-result ul li span {
+    position: relative;
+}
+
+form .tooltip-search-result ul li span.icon {
+    margin-right: 10px;
+}
+
+form .tooltip-search-result ul li img {
+    width: 25px;
+    height: 25px;
+    display: block;
+    border-radius: 2px;
+}
+
+form .tooltip-search-result ul li img.icon-panel {
+    top: 0;
+    left: 0;
+    z-index: 2;
+    position: absolute;
+    border-radius: 2px;
+}
+
+form .tooltip-search-result ul li:not(.head-result-list) a {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    overflow: hidden;
+    white-space: nowrap;
+    align-items: center;
+    text-overflow: ellipsis;
+
+}
+
+form .tooltip-search-result .not-found-result {
+    font-size: 13px;
+    line-height: 20px;
+    padding-left: 80px;
+    letter-spacing: normal;
+    background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iNTBweCIgaGVpZ2h0PSI1MHB4IiB2aWV3Qm94PSIwIDAgNTAgNTAiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8IS0tIEdlbmVyYXRvcjogc2tldGNodG9vbCA1Ni4zICgxMDEwMTApIC0gaHR0cHM6Ly9za2V0Y2guY29tIC0tPgogICAgPHRpdGxlPjk2MEY4RERDLUVEQUEtNEM1RC04RUE3LTg4MjgxMTlBODI2QzwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggc2tldGNodG9vbC48L2Rlc2M+CiAgICA8ZGVmcz4KICAgICAgICA8cG9seWdvbiBpZD0icGF0aC0xIiBwb2ludHM9IjMuNTgwODA4MjdlLTA1IDAgNDMuMzMzMzM0MiAwIDQzLjMzMzMzNDIgNTAgMy41ODA4MDgyN2UtMDUgNTAiPjwvcG9seWdvbj4KICAgIDwvZGVmcz4KICAgIDxnIGlkPSJBc3NldC1BcnRib2FyZC1QYWdlIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4KICAgICAgICA8ZyBpZD0iSWNvbnMtLy1ZZWxsb3ctLy1IaWRlLXBhc3N3b3JkLSI+CiAgICAgICAgICAgIDxnIGlkPSJQYWdlLTEiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDMuMzMzMzMzLCAwLjAwMDAwMCkiPgogICAgICAgICAgICAgICAgPG1hc2sgaWQ9Im1hc2stMiIgZmlsbD0id2hpdGUiPgogICAgICAgICAgICAgICAgICAgIDx1c2UgeGxpbms6aHJlZj0iI3BhdGgtMSI+PC91c2U+CiAgICAgICAgICAgICAgICA8L21hc2s+CiAgICAgICAgICAgICAgICA8ZyBpZD0iQ2xpcC0yIj48L2c+CiAgICAgICAgICAgICAgICA8cGF0aCBkPSJNMjMuMzM0MDAwMiwyMS41OTY2NjY3IEMyMy4zMzQwMDAyLDE4Ljg3MzMzMzMgMjUuNTQwNjY2OCwxNi42NjY2NjY3IDI4LjI2NDAwMDIsMTYuNjY2NjY2NyBMMzMuMzM0MDAwMiwxNi42NjY2NjY3IEwzMy4zMzQwMDAyLDIwLjI0MzMzMzMgQzMzLjMzNDAwMDIsMjMuNzkgMzAuNDU3MzMzNSwyNi42NjY2NjY3IDI2LjkxMDY2NjgsMjYuNjY2NjY2NyBMMjMuMzM0MDAwMiwyNi42NjY2NjY3IEwyMy4zMzQwMDAyLDIxLjU5NjY2NjcgWiBNMjAuMDAwNjY2OCwyNi42NjY2NjY3IEwxNi40MjQwMDAyLDI2LjY2NjY2NjcgQzEyLjg3NzMzMzUsMjYuNjY2NjY2NyAxMC4wMDA2NjY4LDIzLjc5IDEwLjAwMDY2NjgsMjAuMjQzMzMzMyBMMTAuMDAwNjY2OCwxNi42NjY2NjY3IEwxNS4wNzA2NjY4LDE2LjY2NjY2NjcgQzE3Ljc5NDAwMDIsMTYuNjY2NjY2NyAyMC4wMDA2NjY4LDE4Ljg3MzMzMzMgMjAuMDAwNjY2OCwyMS41OTY2NjY3IEwyMC4wMDA2NjY4LDI2LjY2NjY2NjcgWiBNNDIuMzU3MzMzNiw0NC4zMSBMMzkuMDI0MDAwMyw0MC45NzY2NjY3IEMzOC40MDA2NjY5LDQwLjM1IDM3LjU1MDY2NjksNDAgMzYuNjY3MzMzNiw0MCBMMjUuNzM3MzMzNSw0MCBMMzYuMDY3MzMzNiwyNS4yNDMzMzMzIEMzNi40NTczMzM2LDI0LjY4MzMzMzMgMzYuNjY3MzMzNiwyNC4wMTY2NjY3IDM2LjY2NzMzMzYsMjMuMzMzMzMzMyBMMzYuNjY3MzMzNiwxMCBDMzYuNjY3MzMzNiw0LjQ4NjY2NjY3IDMyLjE4MDY2NjksMCAyNi42NjczMzM1LDAgTDE2LjY2NzMzMzUsMCBDMTEuMTU0MDAwMSwwIDYuNjY3MzMzMzgsNC40ODY2NjY2NyA2LjY2NzMzMzM4LDEwIEw2LjY2NzMzMzM4LDIzLjMzMzMzMzMgQzYuNjY3MzMzMzgsMjQuMDE2NjY2NyA2Ljg3NzMzMzM4LDI0LjY4MzMzMzMgNy4yNzA2NjY3MiwyNS4yNDMzMzMzIEwxNy41OTczMzM1LDQwIEw2LjY2NzMzMzM4LDQwIEM1Ljc4NDAwMDA0LDQwIDQuOTM0MDAwMDQsNDAuMzUgNC4zMTA2NjY3LDQwLjk3NjY2NjcgTDAuOTc3MzMzMzQsNDQuMzEgQzAuMDI0MDAwMDAwMiw0NS4yNjMzMzMzIC0wLjI2MjY2NjY2OSw0Ni42OTY2NjY3IDAuMjU0MDAwMDAyLDQ3Ljk0MzMzMzMgQzAuNzcwNjY2NjcyLDQ5LjE4NjY2NjcgMS45ODczMzMzNSw1MCAzLjMzNDAwMDAyLDUwIEw0MC4wMDA2NjcsNTAgQzQxLjM0NzMzMzYsNTAgNDIuNTY0MDAwMyw0OS4xODY2NjY3IDQzLjA4MDY2Nyw0Ny45NDMzMzMzIEM0My41OTczMzM2LDQ2LjY5NjY2NjcgNDMuMzEwNjY3LDQ1LjI2MzMzMzMgNDIuMzU3MzMzNiw0NC4zMSBMNDIuMzU3MzMzNiw0NC4zMSBaIiBpZD0iRmlsbC0xIiBmaWxsPSIjRjVCMTA1IiBtYXNrPSJ1cmwoI21hc2stMikiPjwvcGF0aD4KICAgICAgICAgICAgPC9nPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+) no-repeat 15px 15px;
+}
+
+form .tooltip-search-result .not-found-result p:not(:first-child) {
+    color: var(--default-text-color);
+}
+
+/**
+ * Scroll Pane
+ */
+
+form .tooltip-search-result .jspVerticalBar {
+    top: 15px;
+    width: 5px;
+    right: 10px;
+    overflow: hidden;
+    height: calc(100% - 30px);
+}
+
+form .tooltip-search-result .jspTrack,
+form .tooltip-search-result .jspVerticalBar {
+    background: transparent;
+}
+
+form .tooltip-search-result .jspDrag {
+    transition: background-color .2s;
+    background: rgba(139, 139, 139, 0.5);
+}
+
+form .tooltip-search-result .jspDrag:hover {
+    background: rgba(139, 139, 139, 0.35);
+}
+
+form .tooltip-search-result .jspDrag:active {
+    background: rgba(139, 139, 139, 0.75);
+}
+
+/**
+ * Items
+ */
+form .items-filter {
+    padding-top: 29px;
+}
+
+form .item-grade,
+form .skills-filter label,
+form .skills-filter .skill-lvl,
+form .items-filter .item-grade label,
+form .skills-filter label input + span,
+form .items-filter .item-grade label input + span {
+    display: flex;
+}
+
+form .items-filter p,
+form .skills-filter p {
+    margin: 0;
+    color: #000;
+    font-size: 13px;
+    line-height: 20px;
+    letter-spacing: 0;
+}
+
+form .items-filter .item-grade {
+    padding: 13px 0 15px;
+}
+
+form .items-filter a,
+form .items-filter label,
+form .skills-filter label {
+    font-size: 11px;
+    line-height: 15px;
+    position: relative;
+    align-items: center;
+    letter-spacing: -0.22px;
+}
+
+form .items-filter label input,
+form .skills-filter label [type=checkbox] {
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    position: absolute;
+}
+
+form .items-filter label + a,
+form .items-filter label + label {
+    margin-left: 30px;
+}
+
+form .items-filter label input + span,
+form .skills-filter label input + span {
+    align-items: center;
+}
+
+form .items-filter label input + span:before,
+form .skills-filter label input + span:before {
+    width: 15px;
+    content: '';
+    height: 15px;
+    display: block;
+    margin-right: 5px;
+    border-radius: 2px;
+    box-sizing: border-box;
+}
+
+form .items-filter label input:checked + span:before,
+form .skills-filter label input:checked + span:before {
+    background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB2aWV3Qm94PSIwIDAgMTUgMTUiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxyZWN0IGZpbGw9IiNGNUIxMDUiIHg9IjAiIHk9IjAiIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNSIgcng9IjIiPjwvcmVjdD4KICAgIDxwb2x5Z29uIGZpbGw9IiMxRTIxMjgiIHBvaW50cz0iMTIuOTc4IDUuNDE0IDYuOTkzIDExLjM5OSAzIDcuNDA2IDQuNDE1IDUuOTkyIDYuOTkzIDguNTcxIDExLjU2NCA0Ij48L3BvbHlnb24+Cjwvc3ZnPg==) no-repeat center;
+    background-size: 15px 15px;
+}
+
+form .items-filter label input:not(:checked) + span:before,
+form .skills-filter label input:not(:checked) + span:before {
+    border: 1px solid rgba(0, 0, 0, .2);
+}
+
+/**
+ * Skills
+ */
+form .skills-filter {
+    padding-top: 29px;
+}
+
+form .skills-filter .skill-lvl {
+    padding-top: 4px;
+    align-items: center;
+}
+
+form .skills-filter .skill-lvl label + label {
+    margin-left: 80px;
+}
+
+form .skills-filter .level-select {
+    display: flex;
+    position: relative;
+    align-items: center;
+}
+
+form .skills-filter .level-select input {
+    width: 85px;
+    border: none;
+    outline: none;
+    padding: 10px 0;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 15px;
+    letter-spacing: 0;
+    color: var(--default-text-color);
+    font-family: GothamSSm-Medium, sans-serif;
+    border-bottom: 1px solid rgba(0, 0, 0, .2);
+}
+
+form .skills-filter .level-select .level-list-wrap {
+    width: 85px;
+    z-index: 10;
+    overflow: hidden;
+    background: #fff;
+    max-height: 255px;
+    position: absolute;
+    top: calc(100% - 1px);
+    border-radius: 0 0 5px 5px;
+    box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2)
+}
+
+form .skills-filter .level-select:not(:hover) .level-list-wrap.init {
+    display: none;
+}
+
+form .skills-filter .level-select:not(:hover) .level-list-wrap:not(.jspScrollable ) {
+    opacity: .01;
+}
+
+form .skills-filter .level-select ul {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 500;
+    list-style: none;
+    letter-spacing: 0;
+    line-height: 24px;
+    padding: 14px 10px;
+}
+
+form .skills-filter .level-select ul li {
+    padding: 0 5px;
+    border-radius: 3px;
+    transition: background-color .2s;
+}
+
+form .skills-filter .level-select ul li:hover {
+    background: #f5b105;
+}
+
+form .skills-filter .level-select .svg-icon {
+    right: 0;
+    width: 8px;
+    height: 5px;
+    margin-left: -8px;
+}
+
+form .skills-filter .level-select .jspTrack,
+form .skills-filter .level-select .jspVerticalBar {
+    background: none;
+    height: calc(100% - 20px);
+}
+
+form .skills-filter .level-select .jspVerticalBar {
+    top: 10px;
+    right: 5px;
+    width: 3px;
+    overflow: hidden;
+}
+
+form .skills-filter .level-select .jspDrag {
+    background-color: rgba(0, 0, 0, 0.2);
+}

@@ -1,0 +1,89 @@
+body.show-cca {
+    background-position: center 66px;
+}
+
+.cca-wrapper {
+    width: 100%;
+    height: 66px;
+    background: url(/local/resources/images/cca_background.svg) no-repeat center top;
+}
+
+.cca-wrapper .cca-main {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    margin: 0 auto;
+    font-size: 13px;
+    line-height: 20px;
+    max-width: 1186px;
+    letter-spacing: 0;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cca-wrapper .cca-main > p {
+    max-width: 75%;
+}
+
+.cca-wrapper .cca-main .cca-btn {
+    display: flex;
+    align-items: center;
+}
+
+.cca-wrapper .cca-main .cca-btn button {
+    outline: none;
+}
+
+.cca-wrapper .cca-main .cca-btn a + button {
+    margin-left: 15px;
+}
+
+.cca-wrapper .cca-main .cca-confirm {
+    border: none;
+    height: 25px;
+    font-size: 11px;
+    background: #fff;
+    line-height: 15px;
+    letter-spacing: 0;
+    padding: 5px 50px;
+    border-radius: 3px;
+    transition: all .2s;
+}
+
+.cca-wrapper .cca-main .cca-confirm:hover {
+    background: var(--a-color);
+    color: var(--default-text-color);
+}
+
+.cca-wrapper .cca-main .cca-confirm:active {
+    background: var(--a-active-color);
+    color: var(--default-text-color);
+}
+
+.cca-wrapper .cca-main .cca-cancel {
+    width: 25px;
+    height: 25px;
+    border-radius: 3px;
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, .2);
+}
+
+.cca-wrapper .cca-main .cca-cancel:hover {
+    background: rgba(255, 255, 255, .3);
+}
+
+.cca-wrapper .cca-main .cca-cancel:active {
+    opacity: .55;
+}
+
+.cca-wrapper .cca-main .cca-cancel svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+@media (max-width: 1366px) {
+    .cca-wrapper .cca-main {
+        max-width: 886px;
+    }
+}

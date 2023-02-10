@@ -1,0 +1,33 @@
+#breadcrumbs ul {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    font-size: 11px;
+    max-width: 886px;
+    list-style: none;
+    font-weight: 500;
+    flex-wrap: nowrap;
+    line-height: 13px;
+    letter-spacing: -0.22px;
+}
+
+#breadcrumbs ul li span,
+#breadcrumbs ul a:not(:active):not(:hover) {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+#breadcrumbs ul li span {
+    cursor: default;
+}
+
+#breadcrumbs ul svg {
+    width: 11px;
+    height: 11px;
+    margin: 0 10px;
+}
+
+#breadcrumbs ul li {
+    display: flex;
+    align-items: center;
+}

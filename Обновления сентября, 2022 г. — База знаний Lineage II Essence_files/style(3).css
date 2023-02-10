@@ -1,0 +1,148 @@
+.version-site-list {
+    position: relative;
+}
+
+.version-site-list > a {
+    height: 100%;
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.version-site-list > a:not(:hover):not(:active) {
+    color: #000;
+}
+
+.version-site-list > a svg {
+    width: 8px;
+    -webkit-transition: .15s;
+    transition: .15s;
+}
+
+.version-site-list ul {
+    margin: 0;
+    left: -25px;
+    z-index: 10;
+    padding: 10px;
+    background: #fff;
+    list-style: none;
+    position: absolute;
+    visibility: hidden;
+    top: calc(100% - 1px);
+    box-shadow: 0 5px 10px -5px rgba(51, 51, 51, 0.5);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    -webkit-transition: .15s;
+    transition: .15s;
+}
+
+.version-site-list:not(:hover) ul {
+    opacity: 0;
+}
+
+.version-site-list > a:hover svg {
+    fill: var(--a-hover-color);
+}
+
+.version-site-list > a:active svg {
+    fill: var(--a-active-color);
+}
+
+.version-site-list:hover ul:not(:empty) {
+    opacity: 1;
+    visibility: visible;
+}
+
+.version-site-list ul * {
+    white-space: nowrap;
+}
+
+.version-site-list ul a,
+.version-site-list ul span {
+    color: #000;
+    height: 45px;
+    display: flex;
+    padding: 0 15px;
+    font-size: 13px;
+    letter-spacing: 0;
+    align-items: center;
+}
+
+.version-site-list ul span {
+    cursor: default;
+    opacity: .5;
+}
+
+.version-site-list ul li:hover a {
+    border-radius: 5px;
+    background: rgba(232, 232, 236, .5);
+}
+
+.version-site-list ul a:before,
+.version-site-list ul span:before {
+    width: 25px;
+    content: '';
+    height: 25px;
+    display: block;
+    margin-right: 10px;
+}
+
+.version-site-list ul .item-essence a:before,
+.version-site-list ul .item-essence span:before {
+    background: url(/local/resources/images/site_icon_essence.png) center no-repeat;
+    background-size: contain;
+}
+
+.version-site-list ul .item-main a:before,
+.version-site-list ul .item-main span:before {
+    background: url(/local/resources/images/site_icon_main.png) center no-repeat;
+    background-size: contain;
+}
+
+.version-site-list ul .item-classic a:before,
+.version-site-list ul .item-classic span:before {
+    background: url(/local/resources/images/site_icon_classic.png) center no-repeat;
+    background-size: contain;
+}
+
+header .wrap-game-play {
+    align-items: center;
+    position: relative;
+}
+
+header .wrap-game-play .site-lang-list {
+    width: auto;
+    height: 100%;
+    display: flex;
+    margin-left: 21px;
+    margin-right: -69px;
+    align-items: center;
+}
+
+header .wrap-game-play .site-lang-list .current-lang {
+    width: 48px;
+    height: 20px;
+}
+
+header .wrap-game-play .current-lang .icon-current-lang {
+    width: 28px;
+    height: 20px;
+}
+
+header .wrap-game-play .site-lang-list ul {
+    top: 1px;
+    right: -85px;
+}
+
+@media (max-width: 1366px) {
+    .version-site-list > a {
+        font-size: 11px;
+        letter-spacing: normal;
+    }
+
+    .version-site-list > a svg {
+        width: 7px;
+    }
+}

@@ -1,0 +1,251 @@
+var l2db, uriViewer;
+
+(function ($) {
+    $.fn.aimg = function (options) {
+
+        if (typeof options === 'object') options = $.extend({}, {
+            speed     : 50,
+            direction : true
+        }, options);
+
+        return this.each(function () {
+            if (typeof options === 'string'
+                && options === 'destroy'
+            ) return clearInterval($(this).prop('aimgTimer'));
+
+            var $el       = $(this),
+                $img      = $('<img src="' + $(this).css('backgroundImage').replace(/(^url)|(["'()])/g, '') + '" style="position: absolute; left: -99999px;" alt="">'),
+                currFrame = 1,
+                slides;
+
+            $img.bind('load', function () {
+                if (options.direction === true) {
+                    slides = $(this).width() / $el.width();
+                } else {
+                    slides = $(this).height() / $el.height();
+                }
+                $(this).remove();
+                $el.prop({
+                    aimgTimer : startAnimation()
+                });
+            });
+            $('body').append($img);
+
+            function startAnimation() {
+                return setInterval(function () {
+
+                    if (options.direction === true) {
+                        $el.css({
+                            backgroundPositionX : -(currFrame * $el.width())
+                        });
+                    } else {
+                        $el.css({
+                            backgroundPositionY : -(currFrame * $el.height())
+                        });
+                    }
+
+                    if (currFrame === slides) {
+                        currFrame = 0;
+                        if (options.direction === true) {
+                            $el.css({
+                                backgroundPositionX : 0
+                            });
+                        } else {
+                            $el.css({
+                                backgroundPositionY : 0
+                            });
+                        }
+                    }
+
+                    currFrame++;
+                }, options.speed);
+            }
+        });
+    }
+})(jQuery);
+
+(function ($) {
+    $.fn.positionParent = function (selector) {
+        var parent = $(selector),
+            offset = this.offset();
+
+        return {
+            top  : offset.top - parent.offset().top,
+            left : offset.left - parent.offset().left
+        };
+    };
+})(jQuery);
+
+(function ($) {
+    $.fn.toTop = function () {
+        var toTop = $(this),
+            _top  = $('main').offset().top;
+
+        toTop.unbind().click(function () {
+            $('html, body').animate({scrollTop : 0}, {duration : 500});
+            return false;
+        });
+
+        if ($(window).scrollTop() >= _top) {
+            toTop.show();
+        } else {
+            toTop.hide();
+        }
+
+        $(window).scroll(function () {
+            if ($(window).scrollTop() >= _top) {
+                toTop.show();
+            } else {
+                toTop.hide();
+            }
+        });
+    };
+})(jQuery);
+
+(function ($) {
+    /**
+     * @param target {string}
+     */
+    $.fn.tooltip = function (target) {
+        if (target === undefined) return;
+
+        var _this  = this,
+            _title = $('#title');
+
+        $(this).on('mouseenter', target, function () {
+            var _text = $(this).data('title');
+            if (_text === undefined || _text === '') return;
+
+            var _offset  = $(this).offset(),
+                _leftMax = $(_this).offset().left + $(_this).outerWidth();
+
+            _title
+                .show().addClass($(this).data('class')).css({visibility : 'visible'})
+                .find('.text-wrapper').html(_text);
+            var _currLeft = (_offset.left + ($(this).outerWidth() / 2) - (_title.outerWidth() / 2));
+
+            _title.offset({
+                top  : (_offset.top + $(this).outerHeight() + 16),
+                left : ((_currLeft <= _leftMax) ? _currLeft : _offset.left - (_currLeft - _leftMax) - 20)
+            }).css({opacity : 1});
+        });
+        $(this).on('mouseleave', target, function () {
+            _title.css({visibility : 'hidden'}).removeClass($(this).data('class')).find('.text-wrapper').empty();
+        });
+    };
+})(jQuery);
+
+(function ($) {
+    var _b = $('body');
+
+    $.fn.viewer = function (e, data) {
+        var _this   = this,
+            viewer  = $('.main-viewer'),
+            wrapper = $('.content-wrap');
+        data        = $.extend({
+            mode : 'static',
+            lang : ($('html').attr('lang') || navigator.language || navigator.userLanguage || 'ru').substr(0, 2).toLowerCase()
+        }, data, $(this).data());
+
+        if (this.prop('showViewer')
+            && data.item === viewer.prop('item')
+            && (!('mode' in data) || data.mode !== 'float')
+        ) return !viewer.find('.close').trigger('click');
+
+        l2db.showPage(e, {
+            href           : uriViewer,
+            data           : data,
+            title          : null,
+            cache          : true,
+            history        : false,
+            afterShow      : $.noop,
+            beforeInit     : $.noop,
+            beforeLoad     : $.noop,
+            prepareContent : function (response, options) {
+                viewer
+                    .html(response.content)
+                    .prop({
+                        item   : data.item,
+                        target : _this.prop({
+                            showViewer : true
+                        })
+                    })
+                    .show();
+                viewer.find('.close').click(function () {
+                    $(this.parentNode).empty().prop('target').prop({showViewer : false});
+                });
+
+                var wrapOffset   = wrapper.offset(),
+                    targetOffset = _this.positionParent(wrapper);
+
+                if (_this.offset().top - 2 + viewer.outerHeight() > wrapOffset.top + wrapper.outerHeight() + 260) {
+                    viewer.css({
+                        top : targetOffset.top + 50 - viewer.outerHeight()
+                    })
+                } else {
+                    viewer.css({
+                        top : targetOffset.top - 2
+                    })
+                }
+
+                options.afterShow.call(this, response, options);
+            }
+        });
+
+        return this;
+    };
+})(jQuery);
+
+$(function () {
+    var main = $('main#content');
+    $('#to-top:not(:empty)').toTop();
+
+    l2db      = new aiondb({
+        afterLoad  : function () {
+            $('.cover').hide().find('span').aimg('destroy');
+        },
+        beforeLoad : function () {
+            $('.cover')
+                .show().css({display : 'flex'})
+                .find('span').aimg({speed : 90});
+            return true;
+        }
+    });
+    uriViewer = '/api/site/syndication/view/'.replace(
+        'site', /^\/(?<site>main|essence|classic).*/ig.exec(location.pathname).groups.site
+    );
+
+    $('body').tooltip('[data-title]');
+
+    main.find([
+        '.craft-col.current-craft',
+        'article .list-wrap.boxes-list',
+        'article .list-wrap.l-shop-list',
+        'article .news-multisell-list.random-list',
+        'article .news-multisell-list.default-list',
+        'article .multisell-wrapper .product-info .payment',
+    ].join(', ')).l2CentralSyndication({
+        appleStyle   : false,
+        includeStyle : false,
+    });
+    main.find([
+        'article .block-after-content',
+        'article .block-before-content'
+    ].join(', ')).l2CentralSyndication({
+        iconSize     : 26,
+        fontWeight   : 'normal',
+        includeStyle : false
+    });
+
+    main.on('click', '.list-wrap [data-item]', function (e) {
+        $(this).viewer(e, {mode : 'static'});
+    });
+    main.on('click', '.list-wrap [data-item] a[href]', function (e) {
+        e.stopPropagation ? e.stopPropagation() : (e.cancelBubble = true);
+
+        return true;
+    });
+    main.on('click', '.spoiler-wrapper .spoiler-title', function () {
+        $(this).closest('.spoiler-wrapper').toggleClass('open');
+    });
+});

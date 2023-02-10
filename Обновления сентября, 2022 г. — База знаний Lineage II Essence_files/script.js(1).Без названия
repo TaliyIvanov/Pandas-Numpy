@@ -1,0 +1,8 @@
+$(function () {
+    $('.cca-wrapper .cca-btn .cca-cancel').click(function () {
+        $(this).closest('.cca-wrapper').remove();
+        $('body.show-cca').removeClass('show-cca');
+
+        return false;
+    });
+});

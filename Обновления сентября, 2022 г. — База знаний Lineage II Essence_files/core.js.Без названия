@@ -1,0 +1,223 @@
+/**
+ * @author Monstr
+ * @version 1.0.0
+ * @copyright Innova Co. S.à r.l.
+ *
+ * @requires jQuery 3.3.1 or later
+ *
+ * @param config {object}
+ */
+var aiondb = function (config) {
+    this.config        = {
+        errorLoad     : function () {
+        },
+        afterInit     : function () {
+        },
+        afterLoad     : function () {
+        },
+        afterShow     : function () {
+        },
+        beforeInit    : function () {
+        },
+        beforeLoad    : function () {
+        },
+        beforeShow    : function () {
+        },
+        sendAnalytics : function () {
+        }
+    };
+    this.cacheRequest  = {};
+    this.cacheViewer   = {};
+    this.timer         = null;
+    this.xhr           = undefined;
+    this.docTitle      = null;
+    this.sendAnalytics = false;
+    this.startPage     = location.pathname;
+
+    $.extend(this.config, config || {});
+
+    Array.prototype.elFirst = function () {
+        return this[0];
+    };
+
+    Array.prototype.elLast = function () {
+        return this[this.length - 1];
+    };
+
+    this.excludeOnLoadList = [];
+};
+
+/**
+ *
+ * @param e
+ * @param options
+ * @returns {boolean}
+ */
+aiondb.prototype.showPage = function (e, options) {
+    (options.beforeInit || this.config.beforeInit).call(this, e, options);
+
+    var config = {
+        data           : {},
+        href           : false,
+        title          : null,
+        cache          : true,
+        history        : true,
+        afterLoad      : false,
+        beforeLoad     : false,
+        prepareContent : false
+    };
+    $.extend(config, options);
+
+    if (!config.href
+        || (this.startPage === location.pathname
+            && !this.sendAnalytics && e.type === 'popstate')
+    ) {
+        this.startPage     = false;
+        this.sendAnalytics = true;
+
+        return false;
+    } else if (e.type !== 'popstate') {
+        this.sendAnalytics = config.history;
+    } else {
+        this.sendAnalytics = true;
+    }
+
+    var _this     = this,
+        hashQuery = $.md5(JSON.stringify(config));
+
+    if (config.history) history.pushState(null, config.title, config.href);
+
+    (options.afterInit || this.config.afterInit).call(this, e, options);
+
+    if (config.cache && hashQuery in this.cacheRequest) {
+        if (typeof config.prepareContent === 'function') {
+            config.prepareContent.call(_this, this.cacheRequest[hashQuery], config);
+        } else {
+            _this._preparePageData(_this.cacheRequest[hashQuery], config);
+        }
+    } else {
+        $.ajax(config.href, {
+            dataType   : 'json',
+            data       : config.data,
+            error      : this.config.errorLoad,
+            success    : function (data) {
+                if (typeof config.prepareContent === 'function') {
+                    config.prepareContent.call(_this, data, config);
+                } else {
+                    _this._preparePageData(data, config);
+                }
+
+                if (config.cache
+                    && !('CACHE' in data)
+                ) _this.cacheRequest[hashQuery] = data;
+            },
+            complete   : config.afterLoad || this.config.afterLoad,
+            beforeSend : config.beforeLoad || this.config.beforeLoad
+        });
+    }
+
+    return false;
+};
+
+/**
+ *
+ * @param data
+ * @param config
+ * @private
+ */
+aiondb.prototype._preparePageData = function (data, config) {
+    this.config.beforeShow.call(this, data, config);
+
+    this.showCss(data);
+    this.showScripts(data);
+
+    document.title = data['TITLE'];
+
+    /** @namespace data.dynamic {object} */
+    for (var block in data.dynamic) {
+        if (!data.dynamic.hasOwnProperty(block)) continue;
+
+        $('#' + block.toLowerCase()).html(data.dynamic[block]);
+    }
+
+    /** @namespace data.request {object} */
+    if (this.sendAnalytics) this.config.sendAnalytics.call(this, data.request, config);
+
+    this.config.afterShow.call(this, data, config);
+};
+
+/**
+ *
+ * @param data
+ */
+aiondb.prototype.showCss = function (data) {
+    if (typeof data !== 'object' || !('css' in data)) return;
+
+    var arCss = [], head = $('head');
+    $('link[data-file]').each(function () {
+        arCss.push($(this).data('file'));
+    });
+
+    for (var i in data.css) {
+        if (!data.css.hasOwnProperty(i)
+            || in_array(data.css[i]['hash'], arCss)
+        ) continue;
+
+        head.append($('<link />', {
+            'rel'       : 'stylesheet',
+            'href'      : data.css[i]['src'] + '?' + data.css[i]['stamp'],
+            'data-file' : data.css[i]['hash']
+        }));
+        arCss.push(data.css[i]['hash']);
+    }
+};
+
+/**
+ *
+ * @param data
+ */
+aiondb.prototype.showScripts = function (data) {
+    if (typeof data !== 'object' || !('script' in data)) return;
+
+    var arScripts = [], head = $('head');
+    $('script[data-file]').each(function () {
+        arScripts.push($(this).data('file'));
+    });
+
+    /** @namespace data.script */
+    for (var i in data.script) {
+        if (!data.script.hasOwnProperty(i)
+            || in_array(data.script[i]['hash'], arScripts)
+        ) continue;
+
+        if ('ajax_block_id' in data.script[i]) this.excludeOnLoadList.push(data.script[i]['ajax_block_id']);
+
+        head.append($('<script />', {
+            'type'      : 'text/javascript',
+            'src'       : data.script[i]['src'] + '?' + data.script[i]['stamp'],
+            'data-file' : data.script[i]['hash']
+        }));
+        arScripts.push(data.script[i]['hash']);
+    }
+};
+
+/**
+ *
+ * @param needle
+ * @param haystack
+ * @param strict
+ * @returns {boolean}
+ */
+function in_array(needle, haystack, strict) {
+    var found = false, key;
+    strict    = !!strict;
+    for (key in haystack) {
+        if (!haystack.hasOwnProperty(key)) continue;
+
+        if ((strict && haystack[key] === needle) || (!strict && haystack[key] === needle)) {
+            found = key;
+            break;
+        }
+    }
+    return found;
+}

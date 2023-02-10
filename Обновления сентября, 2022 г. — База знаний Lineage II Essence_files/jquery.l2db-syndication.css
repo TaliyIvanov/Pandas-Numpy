@@ -1,0 +1,603 @@
+@import url(//l2central.info/local/resources/fonts/GothamSSm-Light/font.css);
+@import url(//l2central.info/local/resources/fonts/GothamSSm-Medium/font.css);
+
+:root {
+    /*links*/
+    --a-color: #f5b105;
+    --a-hover-color: #fac704;
+    --a-active-color: #d99e0a;
+
+    /*all text*/
+    --default-text-color: rgba(0, 0, 0, 0.65);
+}
+
+/** list */
+.l2central-link {
+    line-height: 17px;
+    align-items: center;
+    vertical-align: middle;
+    font-family: GothamSSm-Medium, sans-serif;
+}
+
+blockquote .l2central-link:hover,
+blockquote .l2central-link:focus {
+    color: #176093;
+}
+
+.l2central-link + .l2central-link {
+    margin-left: 4px !important;
+}
+
+.l2central-link .light-font,
+#l2central-viewer .light-font {
+    font-weight: normal;
+    font-family: GothamSSm-Light, sans-serif;
+}
+
+.l2central-link .l2central-link-icon {
+    top: -1px;
+    position: relative;
+    margin: 2px 3px 2px 0;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.l2central-link .l2central-link-icon img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 2px;
+}
+
+.l2central-link .l2central-link-icon img + .icon-panel {
+    top: 0;
+    left: 0;
+    z-index: 10;
+    position: absolute;
+}
+
+
+/** viewers */
+#l2central-viewer {
+    z-index: 1000;
+    position: absolute;
+    border-radius: 5px;
+    font-family: GothamSSm-Medium, sans-serif;
+    box-shadow: 1px 2px 5px 0 rgba(0, 0, 0, 0.25);
+}
+
+#l2central-viewer hr,
+#l2central-viewer hr {
+    height: 1px;
+    border: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+#l2central-viewer > .viewer {
+    background: #fff;
+    border-radius: 5px 5px 0 0;
+}
+
+.main-viewer > .viewer p.shift-notice,
+#l2central-viewer > .viewer p.shift-notice {
+    opacity: .85;
+    font-size: 11px;
+    margin-top: 25px;
+    margin-bottom: 0;
+    line-height: 17px;
+    font-family: GothamSSm-Light, sans-serif;
+}
+
+.main-viewer > .viewer p.shift-notice kbd,
+#l2central-viewer > .viewer p.shift-notice kbd {
+    color: #fff;
+    padding: 0 4px;
+    border-radius: 3px;
+    background: var(--default-text-color);
+}
+
+#l2central-viewer > a.viewer-footer {
+    color: #000;
+    width: 100%;
+    height: 45px;
+    display: flex;
+    font-size: 13px;
+    font-weight: 500;
+    align-items: center;
+    justify-content: center;
+    background: var(--a-color);
+    border-radius: 0 0 5px 5px;
+    font-family: GothamSSm-Medium, sans-serif;
+}
+
+#l2central-viewer > a.viewer-footer:hover {
+    background: var(--a-hover-color);
+}
+
+#l2central-viewer > a.viewer-footer:active {
+    background: var(--a-active-color);
+}
+
+
+/** items viewer */
+#l2central-viewer > .viewer.items {
+    width: 425px;
+    padding: 15px 25px 25px;
+}
+
+.viewer.items .viewer-item-header,
+.viewer.skills .skill-header {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+.viewer.items .viewer-item-header .item-icon,
+.viewer.skills .skill-header .skill-icon {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    margin-right: 5px;
+    position: relative;
+}
+
+.viewer.items .viewer-item-header .item-icon img,
+.viewer.skills .skill-header .skill-icon img {
+    width: 40px;
+    height: 40px;
+    display: block;
+    border-radius: 2px;
+}
+
+.viewer.items .viewer-item-header .item-icon img:not(.icon-panel) {
+    background: linear-gradient(45deg, #181010, #945539);
+}
+
+.viewer.items .viewer-item-header .item-icon img + .icon-panel,
+.viewer.skills .skill-header .skill-icon img + .icon-panel {
+    top: 0;
+    left: 0;
+    position: absolute;
+}
+
+.viewer.items .viewer-item-header .item-desc {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 0;
+    line-height: 18px;
+    letter-spacing: -0.2px;
+    font-family: GothamSSm-Medium, sans-serif;
+}
+
+.viewer.items .viewer-item-header .item-desc span {
+    margin-left: 4px;
+}
+
+.viewer.items .viewer-item-wrap {
+    width: 100%;
+    display: flex;
+    font-size: 11px;
+    margin-top: 10px;
+    flex-wrap: nowrap;
+}
+
+.viewer.items .viewer-item-info {
+    width: 100%;
+    padding-right: 15px;
+}
+
+.viewer.items .viewer-item-info h4 {
+    font-size: 11px;
+    margin: 0 0 15px;
+    line-height: 13px;
+    font-family: GothamSSm-Bold, sans-serif;
+}
+
+.viewer.items .viewer-item-info h5 {
+    color: #000;
+    font-size: 11px;
+    margin: 5px 0 10px;
+    font-weight: inherit;
+}
+
+.viewer.items .item-options {
+    order: 3;
+    width: 180px;
+    flex: 1 1 100%;
+    min-width: 180px;
+    max-width: 180px;
+    padding-left: 15px;
+    border-left: 1px solid rgba(0, 0, 0, .1);
+}
+
+.viewer.items .item-options .options-title {
+    margin: 0;
+    font-size: 11px;
+    line-height: 13px;
+    letter-spacing: 0;
+    padding-bottom: 7px;
+    font-weight: normal;
+    font-family: inherit;
+}
+
+.viewer.items .item-options ul,
+.viewer.items .viewer-item-info ul,
+.viewer.items .item-options ul li,
+.viewer.items .viewer-item-info ul li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    line-height: 13px;
+    letter-spacing: 0;
+    color: var(--default-text-color);
+}
+
+.viewer.items .viewer-item-info ul li {
+    display: flex;
+    align-items: center;
+}
+
+.viewer.items .viewer-item-info ul li.separator {
+    height: 1px;
+    padding-top: 5px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, .1);
+}
+
+.viewer.items .viewer-item-info ul li.max-use-desc {
+    margin-top: -8px;
+    white-space: nowrap;
+    font-family: GothamSSm-Light, sans-serif;
+}
+
+.viewer.items .item-options ul li:before,
+.viewer.items .viewer-item-info ul li:before {
+    display: none;
+}
+
+.viewer.items .viewer-item-info ul:not(:last-child) {
+    margin-bottom: 15px;
+}
+
+.viewer.items .item-options ul li:not(:last-child):not(.separator),
+.viewer.items .viewer-item-info ul li:not(:last-child):not(.separator) {
+    margin-bottom: 7px;
+}
+
+.viewer.items .viewer-item-info ul li.pattack,
+.viewer.items .viewer-item-info ul li.mattack {
+    font-size: 14px;
+    line-height: 16px;
+}
+
+.viewer.items .item-options ul + hr,
+.viewer.items .viewer-item-info ul + hr {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.viewer.items .viewer-item-info p {
+    line-height: 16px;
+    color: var(--default-text-color);
+}
+
+.viewer.items .item-options ul + h5.options-title {
+    margin-top: 20px;
+}
+
+.viewer.items .item-options .options-title.title-can {
+    color: #40ae74;
+}
+
+.viewer.items .item-options .options-title.title-cannot {
+    color: #ea4c25;
+}
+
+
+/** npcs viewer */
+#l2central-viewer > .viewer.npcs {
+    width: 355px;
+    padding: 19px 25px 25px;
+}
+
+.viewer.npcs .npc-header {
+    width: 100%;
+}
+
+.viewer.npcs .npc-header .npc-title {
+    color: #000;
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-family: GothamSSm-Medium, sans-serif;
+}
+
+.viewer.npcs .npc-header h1 {
+    color: #000;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 25px;
+    margin-bottom: 23px;
+    letter-spacing: -0.3px;
+    font-family: GothamSSm-Medium, sans-serif;
+}
+
+.viewer.npcs .npcs-wrap ul {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.viewer.npcs .npcs-wrap ul li {
+    color: #000;
+    display: flex;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 20px;
+    align-items: center;
+    letter-spacing: -0.2px;
+    font-family: GothamSSm-Medium, sans-serif;
+}
+
+.viewer.npcs .npcs-wrap ul li:not(:last-child) {
+    margin-bottom: 15px;
+}
+
+.viewer.npcs .npcs-wrap ul li span:first-child {
+    opacity: 0.5;
+    min-width: 40%;
+}
+
+.viewer.npcs .npcs-wrap ul li span + span {
+    width: 100%;
+    display: flex;
+    padding-left: 7px;
+}
+
+.viewer.npcs .npcs-wrap ul li.skills {
+    margin: -8px 0;
+    align-items: flex-start;
+}
+
+.viewer.npcs .npcs-wrap ul li.skills span + span {
+    flex-wrap: wrap;
+}
+
+.viewer.npcs .npcs-wrap ul li.skills span:first-child {
+    padding-top: 8px;
+}
+
+.viewer.npcs .npcs-wrap ul li.skills span:last-child img {
+    width: 32px;
+    height: 32px;
+    display: block;
+}
+
+.viewer.npcs .npcs-wrap ul li.skills span:last-child a {
+    margin: 2px 0;
+}
+
+.viewer.npcs .npcs-wrap ul li.skills span:last-child a:not(:last-child) {
+    margin-right: 4px;
+}
+
+
+/** skills viewer */
+#l2central-viewer > .viewer.craft,
+#l2central-viewer > .viewer.skills {
+    width: 375px;
+    padding: 25px 25px 5px;
+}
+
+.viewer.skills .skill-header {
+    margin: 0;
+    padding: 0;
+    align-items: flex-start;
+}
+
+.viewer.skills .skill-header .skill-desc {
+    margin: 0;
+    width: 100%;
+    font-size: 15px;
+    max-width: 280px;
+    font-weight: 350;
+    overflow: hidden;
+    line-height: 20px;
+    letter-spacing: -0.3px;
+    text-overflow: ellipsis;
+}
+
+.viewer.skills .skill-header .skill-name {
+    display: flex;
+    flex-wrap: wrap;
+    min-height: 40px;
+    align-content: space-between;
+}
+
+.viewer.skills .skill-header .skill-type {
+    margin: 0;
+    color: #000;
+    opacity: 0.5;
+    font-size: 10px;
+    font-weight: 350;
+    max-width: 280px;
+    overflow: hidden;
+    line-height: 15px;
+    white-space: nowrap;
+    letter-spacing: 1px;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+}
+
+.viewer.skills .main-skill-wrap {
+    margin: 0;
+    display: block;
+    padding-top: 10px;
+}
+
+.viewer.skills .main-skill-wrap p {
+    color: #000;
+    display: flex;
+    margin: 10px 0;
+    font-size: 11px;
+    font-weight: 350;
+    line-height: 20px;
+    font-style: normal;
+    letter-spacing: -0.2px;
+    align-items: flex-start;
+}
+
+.viewer.skills .main-skill-wrap p + {
+    margin-top: 15px;
+}
+
+.viewer.skills .main-skill-wrap p > span {
+    width: 50%;
+    display: block;
+    min-width: 50%;
+}
+
+.viewer.skills .main-skill-wrap p > span:first-child {
+    opacity: .65;
+}
+
+.viewer.skills .main-skill-wrap p.main-skill-info {
+    border: none;
+    opacity: .65;
+    display: block;
+    min-width: auto;
+    max-width: 100%;
+    padding: 10px 0 0;
+    border-top: 1px solid rgba(0, 0, 0, .25);
+}
+
+.viewer.skills .main-skill-wrap p span.item_consume {
+   line-height: 26px;
+}
+
+.viewer.skills .main-skill-wrap p a.item_consume {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+}
+
+.viewer.skills .main-skill-wrap p a.item_consume img {
+    width: 26px;
+    height: 26px;
+    min-width: 26px;
+    border-radius: 2px;
+}
+
+.viewer.skills .main-skill-wrap p a.item_consume .icon-wrap {
+    width: 26px;
+    height: 26px;
+    display: block;
+    margin-right: 4px;
+    position: relative;
+}
+
+
+/** craft viewer */
+.viewer.craft .craft-category {
+    opacity: .75;
+    display: flex;
+    font-size: 10px;
+    line-height: 18px;
+    align-items: center;
+    letter-spacing: -.2px;
+    text-transform: uppercase;
+}
+
+.viewer.craft .craft-category svg {
+    width: 10px;
+    height: 10px;
+    margin: 0 3px 0 4px;
+}
+
+.viewer.craft h2 {
+    font-size: 12px;
+    margin-top: 15px;
+    line-height: 20px;
+    margin-bottom: 10px;
+}
+
+.viewer.craft hr {
+    margin: 15px 0 10px;
+}
+
+.viewer.craft hr + h2 {
+    margin-top: 10px;
+}
+
+.viewer.craft ul.craft-list {
+    padding: 0;
+    font-size: 12px;
+    list-style: none;
+    margin: 0 0 15px;
+    line-height: 14px;
+}
+
+.viewer.craft ul.craft-list li {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.viewer.craft ul.craft-list li + li {
+    margin-top: 15px;
+}
+
+.viewer.craft ul.craft-list li a.icon {
+    display: block;
+    margin-right: 6px;
+    position: relative;
+}
+
+.viewer.craft ul.craft-list li img {
+    width: 32px;
+    height: 32px;
+    display: block;
+    border-radius: 2px;
+}
+
+.viewer.craft ul.craft-list li img + .panel {
+    top: 0;
+    left: 0;
+    position: absolute;
+}
+
+.viewer.craft ul.craft-list li .craft-name .name {
+    max-width: 283px;
+    overflow: hidden;
+    white-space: nowrap;
+    display: inline-block;
+    text-overflow: ellipsis;
+}
+
+.viewer.craft ul.craft-list li .add-data span:not(:last-child) {
+    padding-right: 3px;
+}
+
+.viewer.craft ul.craft-list li .add-data span:not(:last-child):after {
+    content: ',';
+}
+
+.viewer.craft ul.craft-list li:not(:hover):not(:active).color-0 a {
+    color: #404040;
+}
+
+.viewer.craft ul.craft-list li:not(:hover):not(:active).color-1 a {
+    color: #5a4728;
+}
+
+.viewer.craft ul.craft-list li:not(:hover):not(:active).color-2 a {
+    color: #206062;
+}
+
+.viewer.craft ul.craft-list li:not(:hover):not(:active).color-3 a,
+.viewer.craft ul.craft-list li:not(:hover):not(:active).color-4 a {
+    color: #ff1d1d;
+}

@@ -1,0 +1,174 @@
+$(function () {
+    var timer,
+        filter = $('#filter'),
+        config = {
+            xhr       : undefined,
+            timer     : undefined,
+            keys      : [111, 189, 187, 220, 110, 106, 109, 107, 191],
+            shiftKeys : [48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 111, 189, 187, 220, 110, 106, 109, 107, 191],
+            container : '.tooltip-search-result',
+            length    : {
+                max     : false,
+                current : false
+            }
+        };
+
+    filter
+        .find('input[name="s"]')
+        .prop({isQuery : false})
+        .bind({
+            query   : function (e, text) {
+                var _this = this;
+
+                text = text.replace(/[/\s]/gi, '+').replace(/[<>\\]/gi, '');
+                if (text.length < 3) return false;
+
+                config.xhr = $.ajax({
+                    url        : $(this.form).data('action'),
+                    type       : 'GET',
+                    data       : {
+                        's' : text
+                    },
+                    dataType   : 'json',
+                    beforeSend : function () {
+                        $(_this).prop({isQuery : true});
+                        $('<i />', {
+                            'class' : 'loader'
+                        }).insertAfter($(_this)).aimg({
+                            speed     : 90,
+                            direction : false
+                        });
+                    },
+                    success    : function (data) {
+                        if ($(_this).prop('isQuery') && 'dynamic' in data) {
+                            $(config.container)
+                                .html(data.dynamic.content)
+                                .bind({
+                                    mouseenter : function () {
+                                        $(_this).unbind('blur');
+                                    },
+                                    mouseleave : function () {
+                                        $(_this).bind({
+                                            blur : function () {
+                                                $(this).trigger('abort');
+                                            }
+                                        });
+                                    }
+                                })
+                                .show();
+                        } else {
+                            $(_this).trigger('abort');
+                        }
+                    },
+                    complete   : function () {
+                        setTimeout(function () {
+                            $(config.container).jScrollPane({
+                                contentWidth     : 571,
+                                hideFocus        : !0,
+                                showArrows       : !1,
+                                verticalGutter   : 0,
+                                mouseWheelSpeed  : 20,
+                                arrowButtonSpeed : 20
+                            });
+                        }, 500);
+                        $(_this).prop({isQuery : true}).siblings('i').remove();
+                    }
+                });
+            },
+            abort   : function () {
+                clearTimeout(config.timer);
+
+                $(this).prop({isQuery : false}).siblings('i').remove();
+                if (typeof config.xhr === 'object') config.xhr.abort();
+                var jsp = $(config.container).data('jsp');
+                if (jsp !== undefined) jsp.destroy();
+                $(config.container).empty();
+                config.xhr = undefined;
+            },
+            keydown : function (e) {
+                if (in_array(e.keyCode, config.keys)
+                    || (e.shiftKey && in_array(e.keyCode, config.shiftKeys))
+                ) return false;
+            },
+            keyup   : function (event) {
+                if (event.ctrlKey || event.keyCode === 17) return true;
+
+                var _this = this,
+                    _text = this.value;
+
+                if (event.keyCode === 13) {
+                    $(this).trigger('abort', [event]);
+                    return true;
+                } else if (!in_array(event.keyCode, [9, 35, 36, 37, 38, 39, 40])) {
+                    $(this).trigger('abort');
+
+                    if (!config.length.current) config.length.current = 3;
+                    if (this.value.length >= config.length.current) {
+                        config.length.current += 3;
+                        config.length.max = this.value.length;
+                        $(this).trigger('abort');
+
+                        config.timer = setTimeout(function () {
+                            if (_text.length === 0) return false;
+
+                            $(_this).trigger('query', [_text]);
+                            clearTimeout(config.timer);
+                        }, 750);
+                        return true;
+                    } else if (config.length.max
+                        && this.value.length < config.length.max
+                        && this.value.length < config.length.current
+                    ) {
+                        config.length.current += ((config.length.current > 3) ? -3 : 0);
+                    }
+
+                    if (this.value.length > 3 && config.xhr === undefined) {
+                        config.timer = setTimeout(function () {
+                            if (_text.length === 0) return false;
+
+                            $(_this).trigger('query', [_text]);
+                            clearTimeout(config.timer);
+                        }, 750);
+                    }
+                }
+                return true;
+            },
+            blur    : function () {
+                $(this).trigger('abort');
+            }
+        });
+    filter
+        .find('.skills-filter .level-list-wrap')
+        .jScrollPane({
+            hideFocus       : !0,
+            showArrows      : !1,
+            verticalGutter  : 0,
+            mouseWheelSpeed : 5
+        });
+    setTimeout(function () {
+        filter
+            .find('.skills-filter .level-list-wrap').addClass('init')
+            .find('li')
+            .click(function () {
+                var input = $(this)
+                    .closest('.level-list-wrap')
+                    .fadeOut('fast', function () {
+                        var _this = this;
+                        setTimeout(function () {
+                            $(_this).removeAttr('style');
+                        }, 25);
+                    })
+                    .siblings('input').val($(this).text());
+                $(input[0].form).submit();
+            });
+    }, 25);
+
+    $(filter).find('input:checkbox').change(function () {
+        var _this = this;
+        clearTimeout(timer);
+
+        timer = setTimeout(function () {
+            $(_this.form).submit();
+        }, 750);
+    });
+});

@@ -1,0 +1,64 @@
+nav.pagination {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+}
+
+nav.pagination:not(:empty) {
+    font-size: 13px;
+    line-height: 35px;
+    padding-top: 60px;
+}
+
+nav.pagination a {
+    display: block;
+    padding: 0 13px;
+}
+
+nav.pagination span,
+nav.pagination a:not(.active):not(:hover) {
+    color: var(--default-text-color);
+}
+
+nav.pagination a:not(.active):hover {
+    color: #000;
+}
+
+nav.pagination span {
+    cursor: default;
+}
+
+nav.pagination a.next {
+    padding: 0 20px;
+    line-height: 33px;
+    margin-left: 20px;
+    border-radius: 3px;
+    border: 1px solid rgba(0, 0, 0, .2);
+}
+
+.tab-navigation-wrap {
+    display: flex;
+    justify-content: space-between;
+}
+
+.tab-navigation-wrap nav.pagination {
+    width: auto;
+    padding-top: 38px;
+}
+
+.tab-navigation-wrap nav.pagination a:first-child {
+    padding-left: 0;
+}
+
+.tab-navigation-wrap nav.pagination.size-select a {
+    padding: 0 10px;
+}
+
+.tab-navigation-wrap nav.pagination.size-select a:last-child {
+    padding-right: 0;
+}
+
+.tab-navigation-wrap nav.pagination.size-select a + span:before {
+    content: 'I';
+}

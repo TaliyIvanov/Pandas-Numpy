@@ -1,0 +1,34 @@
+aside .banners {
+    padding: 0 15px;
+}
+
+aside .banners img {
+    overflow: hidden;
+    border-radius: 5px;
+    box-shadow: 0 10px 10px -10px rgba(51, 51, 51, 0.5);
+}
+
+aside .banners a {
+    display: block;
+    position: relative;
+}
+
+aside .banners a + a {
+    margin-top: 20px;
+}
+
+aside .banners p {
+    left: 0;
+    width: 100%;
+    position: absolute;
+}
+
+aside .banners p.banner-name {
+    color: #fff;
+    bottom: 25px;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 18px;
+    text-align: center;
+    letter-spacing: -0.2px;
+}
